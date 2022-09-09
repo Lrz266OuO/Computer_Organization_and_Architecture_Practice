@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-09 06:56:22
+ * @LastEditTime: 2022-09-09 07:31:18
  * @Description:  
  */
 
@@ -26,7 +26,7 @@ class Cache {
         unsigned int NUM_OF_WRITE;          // number of write
         unsigned int NUM_OF_WRITE_MISS;     // number of write_miss
         unsigned int NUM_OF_WRITE_BACK;     // number of write_back
-        // unsigned int TOT_MEM_TRAFFIC;
+        unsigned int TOT_MEM_TRAFFIC;
 
         // total_access_time = (reads+writes)*hit_time+(read_misses+write_misses)*miss_penalty
         double MISS_RATE;                   // miss rate
@@ -37,8 +37,8 @@ class Cache {
         CACHE *nextLevel;                   // pointer to the next level of cache
 
     public:
-        unsigned int SET;
-        unsigned int TAG;
+        unsigned int TAG;                   // TAG = SIZE/BLOCKSIZE;
+        unsigned int SET;                   // SET = TAG/ASSOC;
         unsigned int INDEX;
         unsigned int TAG_LOC;
         unsigned int TAG_ADD;
@@ -46,9 +46,8 @@ class Cache {
         unsigned int *TAGS;
         unsigned int *DIRTY;
         unsigned int *VALID;
-
-        int *NUM_OF_SET;
         int *NUM_OF_TAG;
+        int *NUM_OF_SET;
 
         void init(unsigned int block, unsigned int size, unsigned int assoc, unsigned int replace, unsigned int write, char *tracefile);
         void input();
