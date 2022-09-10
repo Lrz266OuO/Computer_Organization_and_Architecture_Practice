@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 06:21:38
+ * @LastEditTime: 2022-09-10 06:28:53
  * @Description:  
  */
 
@@ -54,7 +54,7 @@ class Cache {
         
         void readFromAddress();
         void writeToAddress();
-        void transAddress(unsigned int add);
+        void transformAddress(unsigned int add);
 
         void hit(int index);
         void lru();                         // Least Recently Used:

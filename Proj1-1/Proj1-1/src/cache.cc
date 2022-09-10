@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 06:26:23
+ * @LastEditTime: 2022-09-10 06:29:01
  * @Description:  
  */
 
@@ -52,7 +52,7 @@ void Cache::input() {
     unsigned int address;
 
     while(scanf("%c %x",&rw,&address) != EOF) {
-        transAddress(address);
+        transformAddress(address);
         if(rw=='r' || rw=='R') {
             NUM_OF_READ++;
             readFromAddress();
@@ -165,7 +165,7 @@ void Cache::writeToAddress() {
 
 }
 
-void Cache::transAddress(unsigned int add) {
+void Cache::transformAddress(unsigned int add) {
 
     int block   = (int)log2(BLOCKSIZE);
     int set     = (int)log2(SET);
