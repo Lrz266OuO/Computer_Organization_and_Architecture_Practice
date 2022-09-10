@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 01:24:10
+ * @LastEditTime: 2022-09-10 03:09:51
  * @Description:  
  */
 
@@ -75,6 +75,45 @@ void Cache::output() {
 }
 
 void Cache::readFromAddress() {
+    
+    TAG_ADD = 0;
+    unsigned int i;
+    for(i=0; i<ASSOC; i++) {
+        int index = INDEX+i*SET;
+        if(TAGS[index] == TAG_LOC) {
+            if(REPLACEMENT_POLICY) {
+                // replacement policy = 1: LFU
+                NUM_OF_TAG[index] = NUM_OF_TAG[index] + 1;
+            }
+            else {
+                // replacement policy = 0: LRU
+                hit(index);
+            }
+            return;
+        }
+    }
+
+    // read miss
+    NUM_OF_READ_MISS++;
+    TOT_MEM_TRAFFIC++;
+    if(REPLACEMENT_POLICY) {
+        lfu();
+        NUM_OF_TAG[TAG_ADD] = NUM_OF_SET[INDEX] + 1;
+    }
+    else {
+        lru();
+    }
+    TAGS[TAG_ADD] = TAG_LOC;
+    if(!WRITE_POLICY) {
+        // WBWA
+        if(DIRTY[TAG_ADD] == 1) {
+            TOT_MEM_TRAFFIC++;
+            NUM_OF_WRITE_BACK++;
+            DIRTY[TAG_ADD] = 0;
+        }
+    }
+    
+    return;
 
 }
 
@@ -82,7 +121,7 @@ void Cache::writeToAddress() {
 
 }
 
-void Cache::transAddress(unsigned int address) {
+void Cache::transAddress(unsigned int add) {
 
 }
 

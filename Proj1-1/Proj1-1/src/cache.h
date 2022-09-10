@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 01:10:22
+ * @LastEditTime: 2022-09-10 03:02:20
  * @Description:  
  */
 
@@ -49,16 +49,16 @@ class Cache {
         int *NUM_OF_SET;
 
         void init(unsigned int block, unsigned int size, unsigned int assoc, unsigned int replace, unsigned int write, char *tracefile);
-        void input();
-        void output();
+        void input();                       // input the operation and address
+        void output();                      // output the raw data
         
         void readFromAddress();
         void writeToAddress();
-        void transAddress(unsigned int address);
+        void transAddress(unsigned int add);
 
         void hit(int index);
-        void lru();
-        void lfu();
+        void lru();                         // Least Recently Used:
+        void lfu();                         // Least Frequently Used: select the least recently referenced data block to replace
 
 };
 
