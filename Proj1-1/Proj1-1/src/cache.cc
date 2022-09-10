@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-09 07:36:13
+ * @LastEditTime: 2022-09-10 01:24:10
  * @Description:  
  */
 
@@ -45,3 +45,65 @@ void Cache::init(unsigned int block, unsigned int size, unsigned int assoc, unsi
     nextLevel           = NULL;
 
 }
+
+void Cache::input() {
+
+    char rw;
+    unsigned int address;
+
+    while(scanf("%c %x",&rw,&address) != EOF) {
+        transAddress(address);
+        if(rw=='r' || rw=='R') {
+            NUM_OF_READ++;
+            readFromAddress();
+        }
+        else if(rw=='w' || rw=='W') {
+            NUM_OF_WRITE++;
+            writeToAddress();
+        }
+    }
+
+    MISS_RATE       = (double(NUM_OF_READ_MISS+NUM_OF_WRITE_MISS)/(NUM_OF_READ+NUM_OF_WRITE));
+    MISS_PENALTY    = (20+0.5*((double)BLOCKSIZE/16));
+    HIT_TIME        = (0.25+2.5*((double)SIZE/(512*1024))+0.025*((double)BLOCKSIZE/16)+0.025*ASSOC);
+    ACCESS_TIME     = (HIT_TIME+(MISS_RATE*MISS_PENALTY)); 
+
+}
+
+void Cache::output() {
+
+}
+
+void Cache::readFromAddress() {
+
+}
+
+void Cache::writeToAddress() {
+
+}
+
+void Cache::transAddress(unsigned int address) {
+
+}
+
+void Cache::hit(int index) {
+
+    unsigned int i;
+    for(i=0; i<ASSOC; i++) {
+        if(NUM_OF_TAG[INDEX+i*SET] < NUM_OF_TAG[index]) {
+            NUM_OF_TAG[INDEX+i*SET] = NUM_OF_TAG[INDEX+(i*SET)]+1;
+        }
+    }
+    NUM_OF_TAG[index] = 0;
+    
+}
+
+void Cache::lru() {
+
+}
+
+void Cache::lfu() {
+    
+}
+
+

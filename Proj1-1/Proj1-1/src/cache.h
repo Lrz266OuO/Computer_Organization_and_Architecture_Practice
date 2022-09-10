@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-09 07:31:18
+ * @LastEditTime: 2022-09-10 01:10:22
  * @Description:  
  */
 
@@ -28,11 +28,10 @@ class Cache {
         unsigned int NUM_OF_WRITE_BACK;     // number of write_back
         unsigned int TOT_MEM_TRAFFIC;
 
-        // total_access_time = (reads+writes)*hit_time+(read_misses+write_misses)*miss_penalty
-        double MISS_RATE;                   // miss rate
-        double MISS_PENALTY;                // miss penalty
-        double HIT_TIME;                    // hit time
-        double ACCESS_TIME;                 // total access time
+        double MISS_RATE;                   // miss rate        = (readmisses+writemisses)/(reads+writes)
+        double MISS_PENALTY;                // miss penalty     = 20ns+0.5*(blocksize/16Byte_per_ns)
+        double HIT_TIME;                    // hit time         = 0.25ns+2.5ns*(size/512KB)+0.025ns*(blocksize/16B)+0.025*assoc
+        double ACCESS_TIME;                 // access time      = (reads+writes)*hittime+(readmisses+writemisses)*misspenalty
 
         CACHE *nextLevel;                   // pointer to the next level of cache
 
