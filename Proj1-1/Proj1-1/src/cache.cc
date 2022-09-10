@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 03:09:51
+ * @LastEditTime: 2022-09-10 06:26:23
  * @Description:  
  */
 
@@ -119,9 +119,63 @@ void Cache::readFromAddress() {
 
 void Cache::writeToAddress() {
 
+    unsigned int i;
+    for(i=0; i<ASSOC; i++) {
+        int index = INDEX+i*SET;
+        if(TAGS[index] == TAG_LOC) {
+            if(!WRITE_POLICY) {
+                // write policy = 0: WBWA
+                DIRTY[index] = 1;
+            }
+            else {
+                // write policy = 1: WTNA
+                TOT_MEM_TRAFFIC++;
+            }
+            if(REPLACEMENT_POLICY) {
+                NUM_OF_TAG[index] = NUM_OF_TAG[index] + 1;
+            }
+            else {
+                hit(index);
+            }
+            return;
+        }
+    }
+
+    // write miss
+    NUM_OF_WRITE_MISS++;
+    TOT_MEM_TRAFFIC++;
+    if(!WRITE_POLICY) {
+        if(REPLACEMENT_POLICY) {
+            lfu();
+            NUM_OF_TAG[TAG_ADD] = NUM_OF_SET[INDEX] + 1;
+        }
+        else {
+            lru();
+            NUM_OF_TAG[TAG_ADD] = 0;
+        }
+        if(DIRTY[TAG_ADD]) {
+            NUM_OF_WRITE_BACK++;
+            TOT_MEM_TRAFFIC++;
+        }
+        DIRTY[TAG_ADD] = 1;
+        TAGS[TAG_ADD] = TAG_LOC;
+    }
+
+    return;
+
 }
 
 void Cache::transAddress(unsigned int add) {
+
+    int block   = (int)log2(BLOCKSIZE);
+    int set     = (int)log2(SET);
+    int shift   = 0;
+    int i;
+    for(i=0; i<set; i++) {
+        shift = (shift<<1) | 1;
+    }
+    INDEX       = (add>>block) & shift;
+    TAG_LOC     = add>>(block+set);
 
 }
 
