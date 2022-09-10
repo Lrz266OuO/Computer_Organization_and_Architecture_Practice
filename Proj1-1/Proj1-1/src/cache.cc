@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 06:29:01
+ * @LastEditTime: 2022-09-10 06:37:06
  * @Description:  
  */
 
@@ -193,10 +193,33 @@ void Cache::hit(int index) {
 
 void Cache::lru() {
 
+    unsigned int i;
+    int max = -1;
+    for(i=0; i<ASSOC; i++) {
+        if(NUM_OF_TAG[INDEX+i*SET] > max) {
+            max = NUM_OF_TAG[INDEX+i*SET];
+            TAG_ADD = INDEX + i*SET;
+        }
+    }
+    for(i=0; i<ASSOC; i++) {
+        NUM_OF_TAG[INDEX+i*SET] = NUM_OF_TAG[INDEX+i*SET] + 1;
+    }
+    NUM_OF_TAG[TAG_ADD] = 0;
+
 }
 
 void Cache::lfu() {
     
+    unsigned int i;
+    int min = 1 << 24;
+    for(i=0; i<ASSOC; i++) {
+        if(NUM_OF_TAG[INDEX+i*SET] < min) {
+            min = NUM_OF_TAG[INDEX+i*SET];
+            TAG_ADD = INDEX + i*SET;
+        }
+    }
+    NUM_OF_SET[INDEX] = NUM_OF_TAG[TAG_ADD];
+
 }
 
 
