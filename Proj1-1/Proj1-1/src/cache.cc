@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 06:37:06
+ * @LastEditTime: 2022-09-11 06:42:51
  * @Description:  
  */
 
@@ -26,7 +26,7 @@ void Cache::init(unsigned int block, unsigned int size, unsigned int assoc, unsi
     NUM_OF_WRITE        = 0;
     NUM_OF_WRITE_MISS   = 0;
     NUM_OF_WRITE_BACK   = 0;
-    TOT_MEM_TRAFFIC     = 0;
+    TOTAL_MEMORY_TRAFFIC= 0;
 
     TAG                 = SIZE/BLOCKSIZE;
     SET                 = TAG/ASSOC;
@@ -72,6 +72,40 @@ void Cache::input() {
 
 void Cache::output() {
 
+    printf("  ===== Simulator configuration =====\n");
+    printf("  L1_BLOCKSIZE:%22d\n", BLOCKSIZE);
+    printf("  L1_SIZE:%27d\n", SIZE);
+    printf("  L1_ASSOC:%26d\n", ASSOC);
+    printf("  L1_REPLACEMENT_POLICY:%13d\n", REPLACEMENT_POLICY);
+    printf("  L1_WRITE_POLICY:%19d\n", WRITE_POLICY);
+    printf("  trace_file:%24s\n", TRACE_FILE);
+    printf("  ===================================\n\n");
+
+    printf("===== L1 contents =====\n");
+    unsigned int i, j;
+    for(i=0; i<SET; i++) {
+        printf("set%4d:", i);
+        for(j=0; j<ASSOC; j++) {
+            printf("%8x", TAGS[i+j*SET]);
+            printf((WRITE_POLICY==0 && DIRTY[i+j*SET]==1) ? " D" : "  ");
+        }
+        printf("\n");
+    }
+
+    printf("\n");
+    printf("  ====== Simulation results (raw) ======\n");
+    printf("  a. number of L1 reads:%16d\n", NUM_OF_READ);
+    printf("  b. number of L1 read misses:%10d\n", NUM_OF_READ_MISS);
+    printf("  c. number of L1 writes:%15d\n", NUM_OF_WRITE);
+    printf("  d. number of L1 write misses:%9d\n", NUM_OF_WRITE_MISS);
+    printf("  e. L1 miss rate:%22.4f\n", MISS_RATE);
+    printf("  f. number of writebacks from L1:%6d\n", NUM_OF_WRITE_BACK);
+    printf("  g. total memory traffic:%14d\n", TOTAL_MEMORY_TRAFFIC);
+    
+    printf("\n");
+    printf("  ==== Simulation results (performance) ====\n");
+    printf("  1. average access time:%15.4f ns\n", ACCESS_TIME);
+
 }
 
 void Cache::readFromAddress() {
@@ -95,7 +129,7 @@ void Cache::readFromAddress() {
 
     // read miss
     NUM_OF_READ_MISS++;
-    TOT_MEM_TRAFFIC++;
+    TOTAL_MEMORY_TRAFFIC++;
     if(REPLACEMENT_POLICY) {
         lfu();
         NUM_OF_TAG[TAG_ADD] = NUM_OF_SET[INDEX] + 1;
@@ -107,7 +141,7 @@ void Cache::readFromAddress() {
     if(!WRITE_POLICY) {
         // WBWA
         if(DIRTY[TAG_ADD] == 1) {
-            TOT_MEM_TRAFFIC++;
+            TOTAL_MEMORY_TRAFFIC++;
             NUM_OF_WRITE_BACK++;
             DIRTY[TAG_ADD] = 0;
         }
@@ -129,7 +163,7 @@ void Cache::writeToAddress() {
             }
             else {
                 // write policy = 1: WTNA
-                TOT_MEM_TRAFFIC++;
+                TOTAL_MEMORY_TRAFFIC++;
             }
             if(REPLACEMENT_POLICY) {
                 NUM_OF_TAG[index] = NUM_OF_TAG[index] + 1;
@@ -143,7 +177,7 @@ void Cache::writeToAddress() {
 
     // write miss
     NUM_OF_WRITE_MISS++;
-    TOT_MEM_TRAFFIC++;
+    TOTAL_MEMORY_TRAFFIC++;
     if(!WRITE_POLICY) {
         if(REPLACEMENT_POLICY) {
             lfu();
@@ -155,7 +189,7 @@ void Cache::writeToAddress() {
         }
         if(DIRTY[TAG_ADD]) {
             NUM_OF_WRITE_BACK++;
-            TOT_MEM_TRAFFIC++;
+            TOTAL_MEMORY_TRAFFIC++;
         }
         DIRTY[TAG_ADD] = 1;
         TAGS[TAG_ADD] = TAG_LOC;

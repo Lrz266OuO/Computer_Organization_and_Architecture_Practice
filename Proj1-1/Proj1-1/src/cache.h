@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 06:28:53
+ * @LastEditTime: 2022-09-11 06:39:57
  * @Description:  
  */
 
@@ -26,7 +26,7 @@ class Cache {
         unsigned int NUM_OF_WRITE;          // number of write
         unsigned int NUM_OF_WRITE_MISS;     // number of write_miss
         unsigned int NUM_OF_WRITE_BACK;     // number of write_back
-        unsigned int TOT_MEM_TRAFFIC;
+        unsigned int TOTAL_MEMORY_TRAFFIC;  // total memory traffic
 
         double MISS_RATE;                   // miss rate        = (readmisses+writemisses)/(reads+writes)
         double MISS_PENALTY;                // miss penalty     = 20ns+0.5*(blocksize/16Byte_per_ns)
