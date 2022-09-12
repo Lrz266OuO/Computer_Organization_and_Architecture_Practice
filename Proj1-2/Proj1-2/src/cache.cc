@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 08:02:23
+ * @LastEditTime: 2022-09-12 08:28:52
  * @Description:  
  */
 
@@ -220,7 +220,71 @@ void CACHE::readFromAddress(Cache &cache, unsigned int address, unsigned int vic
 
 void CACHE::writeToAddress(Cache &cache, unsigned int address, unsigned int victim_cache) {
 
-    
+    cache.NUM_OF_WRITE++;
+    cache.transformAddress(address);
+    unsigned int flag = 0;
+
+    unsigned int i;
+    for(i=0; i<cache.ASSOC; i++) {
+        if((cache.TAGS[cache.INDEX+i*cache.SET] == cache.TAG_ADD) && 
+           (cache.VALID[cache.INDEX+i*cache.SET])) {
+            cache.DIRTY[cache.INDEX+i*cache.SET] = 1;
+            cache.hit(cache.INDEX+i*cache.SET);
+            return;
+        }
+    }
+
+    for(i=0; i<cache.ASSOC; i++) {
+        if(cache.VALID[cache.INDEX+i*cache.SET] == 0) {
+            cache.VALID[cache.INDEX+i*cache.SET] = 1;
+            cache.TAG_LOC = cache.INDEX + i * cache.SET;
+            flag = 1;
+            break;
+        }
+    }
+    if(flag) {
+        cache.NUM_OF_WRITE_MISS++;
+        if(cache.nextLevel != NULL) {
+            readFromAddress(L2_Cache, address, 0);
+        }
+        cache.TOTAL_MEMORY_TRAFFIC++;
+        cache.TAGS[cache.TAG_LOC]   = cache.TAG_ADD;
+        cache.DIRTY[cache.TAG_LOC]  = 1;
+        cache.LRU_C[cache.TAG_LOC]  = 0;
+        cache.miss();
+        return;
+    }
+
+    if(victim_cache) {
+        // Write Victim cache
+        cache.miss();
+        cache.LRU_C[cache.TAG_LOC] = 0;
+        readFromVictim(cache, address, 'w');
+        return;
+    }
+
+    // Write miss
+    cache.NUM_OF_WRITE_MISS++;
+    cache.TOTAL_MEMORY_TRAFFIC++;
+    cache.miss();
+    cache.LRU_C[cache.TAG_LOC] = 0;
+
+    if(cache.DIRTY[cache.TAG_LOC]) {
+        cache.TOTAL_MEMORY_TRAFFIC++;
+        if(cache.nextLevel != NULL) {
+            unsigned int shift = cache.TAGS[cache.TAG_LOC];
+            shift = (((shift<<cache.set) | (cache.TAG_LOC % cache.SET)) << cache.block);
+            writeToAddress(L2_Cache, shift, 0);
+        }
+        cache.NUM_OF_WRITE_BACK++;
+    }
+
+    if(cache.nextLevel != NULL) {
+        readFromAddress(L2_Cache, address, 0);
+    }
+
+    cache.DIRTY[cache.TAG_LOC] = 1;
+    cache.TAGS[cache.TAG_LOC] = cache.TAG_ADD;
 
 }
 
