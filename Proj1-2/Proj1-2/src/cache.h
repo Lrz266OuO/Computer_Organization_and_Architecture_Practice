@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 01:07:58
+ * @LastEditTime: 2022-09-12 01:31:25
  * @Description:  
  */
 
@@ -23,13 +23,13 @@ class Cache {
         unsigned int NUM_OF_WRITE;          // number of write
         unsigned int NUM_OF_WRITE_MISS;     // number of write_miss
         unsigned int NUM_OF_WRITE_BACK;     // number of write_back
-        unsigned int NUM_OF_SWAP;           // number of swap
-        unsigned int TOTAL_MEMORY_TRAFFIC;  // total memory traffic between cache and main memory
+        unsigned int NUM_OF_SWAP;           // number of swap: L1_cache miss but Victim_cache hit
+        unsigned int TOTAL_MEMORY_TRAFFIC;  // total memory traffic between caches and main memory
 
-        double MISS_RATE;                   // miss rate        = (readmisses+writemisses)/(reads+writes)
-        double MISS_PENALTY;                // miss penalty     = 20ns+0.5*(blocksize/16Byte_per_ns)
-        double HIT_TIME;                    // hit time         = 0.25ns+2.5ns*(size/512KB)+0.025ns*(blocksize/16B)+0.025*assoc
-        double ACCESS_TIME;                 // access time      = (reads+writes)*hittime+(readmisses+writemisses)*misspenalty
+        double MISS_RATE;                   // miss rate
+        double MISS_PENALTY;                // miss penalty
+        double HIT_TIME;                    // hit time
+        double ACCESS_TIME;                 // access time
 
         
     public:
@@ -43,13 +43,15 @@ class Cache {
         unsigned int *TAGS;
         unsigned int *DIRTY;
         unsigned int *VALID;
-        // unsigned int *LRU_C;
+        unsigned int *LRU_C;
 
         // int block;
         // int index;
 
         void init(unsigned int block, unsigned int size, unsigned int assoc, unsigned int set, unsigned int tag);
+        
         void transformAddress(unsigned int add);
+        
         void hit(int index);
         void miss();
 
