@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:27:01
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 02:10:37
+ * @LastEditTime: 2022-09-12 02:22:49
  * @Description:  
  */
 
@@ -32,7 +32,8 @@ int main(int argc, char *argv[]) {
 	unsigned int write			= (unsigned)atoi(argv[5]);
 	char *tracefile				= argv[6];
 
-	int i, length = (int)strlen(tracefile);
+	int length = (int)strlen(tracefile);
+	int i;
 	for(i=length; i>=0; i--) {
 		if(tracefile[i] == '/') break;
 	}
