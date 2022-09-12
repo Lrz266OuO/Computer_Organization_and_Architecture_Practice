@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 06:00:02
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-11 06:39:57
+ * @LastEditTime: 2022-09-12 00:23:14
  * @Description:  
  */
 
@@ -33,7 +33,7 @@ class Cache {
         double HIT_TIME;                    // hit time         = 0.25ns+2.5ns*(size/512KB)+0.025ns*(blocksize/16B)+0.025*assoc
         double ACCESS_TIME;                 // access time      = (reads+writes)*hittime+(readmisses+writemisses)*misspenalty
 
-        CACHE *nextLevel;                   // pointer to the next level of cache
+        // CACHE *nextLevel;                   // pointer to the next level of cache
 
     public:
         unsigned int TAG;                   // TAG = SIZE/BLOCKSIZE;
@@ -62,6 +62,7 @@ class Cache {
 
 };
 
+/*
 class CACHE {
     
     private:
@@ -71,5 +72,6 @@ class CACHE {
         void init();
 
 };
+*/
 
 #endif

@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-11 06:42:51
+ * @LastEditTime: 2022-09-12 00:23:48
  * @Description:  
  */
 
@@ -42,7 +42,7 @@ void Cache::init(unsigned int block, unsigned int size, unsigned int assoc, unsi
     memset(NUM_OF_TAG, 0, sizeof(NUM_OF_TAG[0])*TAG);
     memset(NUM_OF_SET, 0, sizeof(NUM_OF_SET[0])*SET);
 
-    nextLevel           = NULL;
+    // nextLevel           = NULL;
 
 }
 
