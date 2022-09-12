@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 02:12:08
+ * @LastEditTime: 2022-09-12 07:36:43
  * @Description:  
  */
 
@@ -45,8 +45,8 @@ class Cache {
         unsigned int *VALID;
         unsigned int *LRU_C;
 
-        // int block;
-        // int index;
+        int block;                          // block = log2(BLOCKSIZE)
+        int set;                            // set = log2(SET)
 
         void init(unsigned int block, unsigned int size, unsigned int assoc, unsigned int set, unsigned int tag);
         
@@ -62,7 +62,8 @@ class Cache {
 class CACHE {
 
     private:
-        Cache L1_Cache, L2_Cache;           // L1 cache & L2 cache
+        Cache L1_Cache;                     // L1 cache
+        Cache L2_Cache;                     // L2 cache
         Cache Victim_Cache;                 // Victim cache
         char *TRACE_FILE;                   // filename of address stream
 
@@ -71,9 +72,9 @@ class CACHE {
         void input();
         void output();
         
-        void readFromAddress(Cache &c, unsigned int add, unsigned int v);
-        void writeToAddress(Cache &c, unsigned int add, unsigned int v);
-        void readFromVictim(Cache &c, unsigned int add, char rw);
+        void readFromAddress(Cache &cache, unsigned int address, unsigned int victim_cache);
+        void writeToAddress(Cache &cache, unsigned int address, unsigned int victim_cache);
+        void readFromVictim(Cache &cache, unsigned int address, char rw);
 
 };
 

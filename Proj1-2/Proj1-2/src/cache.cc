@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 02:12:19
+ * @LastEditTime: 2022-09-12 08:02:23
  * @Description:  
  */
 
@@ -54,8 +54,8 @@ void Cache::init(unsigned int block, unsigned int size, unsigned int assoc, unsi
 
 void Cache::transformAddress(unsigned int add) {
 
-    int block   = (int)log2(BLOCKSIZE);
-    int set     = (int)log2(SET);
+    block       = (int)log2(BLOCKSIZE);
+    set         = (int)log2(SET);
     int shift   = 0;
     int i;
     for(i=0; i<set; i++) {
@@ -141,16 +141,153 @@ void CACHE::input() {
 
 void CACHE::output() {
 
-}
-
-void CACHE::readFromAddress(Cache &c, unsigned int add, unsigned int v) {
+    // TODO: 输出格式
 
 }
 
-void CACHE::writeToAddress(Cache &c, unsigned int add, unsigned int v) {
+void CACHE::readFromAddress(Cache &cache, unsigned int address, unsigned int victim_cache) {
+
+    unsigned int flag = 0;
+    cache.NUM_OF_READ++;
+    cache.transformAddress(address);
+
+    unsigned int i;
+    for(i=0; i<cache.ASSOC; i++) {
+        // Hit
+        if((cache.TAGS[cache.INDEX+i*cache.SET] == cache.TAG_ADD) && 
+           (cache.VALID[cache.INDEX+i*cache.SET])) {
+            cache.hit(cache.INDEX+i*cache.SET);
+            return;
+        }
+    }
+
+    // Judge whether invalid read or not.
+    for(i=0; i<cache.ASSOC; i++) {
+        if(cache.VALID[cache.INDEX+i*cache.SET] == 0) {
+            cache.VALID[cache.INDEX+i*cache.SET] = 1;
+            cache.TAG_LOC = cache.INDEX + i * cache.SET;
+            flag = 1;
+            break;
+        }
+    }
+    if(flag) {
+        // Read Invalid
+        cache.NUM_OF_READ_MISS++;
+        if(cache.nextLevel != NULL) {
+            // This cache is L1, next is L2
+            readFromAddress(L2_Cache, address, 0);
+        }
+        cache.TOTAL_MEMORY_TRAFFIC++;
+        cache.TAGS[cache.TAG_LOC]   = cache.TAG_ADD;
+        cache.DIRTY[cache.TAG_LOC]  = 0;
+        cache.LRU_C[cache.TAG_LOC]  = 0;
+        cache.miss();
+        return;
+    }
+
+    if(victim_cache) {
+        // Read Victim cache
+        cache.miss();
+        cache.LRU_C[cache.TAG_LOC] = 0;
+        readFromVictim(cache, address, 'r');
+        return;
+    }
+
+    // Read miss
+    cache.NUM_OF_READ_MISS++;
+    cache.TOTAL_MEMORY_TRAFFIC++;
+    cache.miss();
+    cache.LRU_C[cache.TAG_LOC] = 0;
+    if(cache.DIRTY[cache.TAG_LOC]) {
+        cache.TOTAL_MEMORY_TRAFFIC++;
+        if(cache.nextLevel != NULL) {
+            unsigned int shift = cache.TAGS[cache.TAG_LOC];
+            shift = (((shift << cache.set) | (cache.TAG_LOC % cache.SET)) << cache.block);
+            writeToAddress(L2_Cache, shift, 0);
+        }
+        cache.NUM_OF_WRITE_BACK++;
+        cache.DIRTY[cache.TAG_LOC] = 0;
+    }
+
+    if(cache.nextLevel != NULL) {
+        // Read L2 cache
+        readFromAddress(L2_Cache, address, 0);
+    }
+
+    cache.TAGS[cache.TAG_LOC] = cache.TAG_ADD;
 
 }
 
-void CACHE::readFromVictim(Cache &c, unsigned int add, char rw) {
+void CACHE::writeToAddress(Cache &cache, unsigned int address, unsigned int victim_cache) {
+
+    
+
+}
+
+void CACHE::readFromVictim(Cache &cache, unsigned int address, char rw) {
+
+    cache.transformAddress(address);
+
+    unsigned int temp;
+
+    unsigned int i;
+    for(i=0; i<Victim_Cache.ASSOC; i++) {
+        if((Victim_Cache.TAGS[i] == address>>cache.block) && (Victim_Cache.VALID[i])) {
+            temp                        = cache.TAGS[cache.TAG_LOC];
+            cache.TAGS[cache.TAG_LOC]   = cache.TAG_ADD;
+            Victim_Cache.TAGS[i]        = ((temp << cache.set) | (cache.INDEX % cache.SET));
+
+            temp                        = cache.DIRTY[cache.TAG_LOC];
+            cache.DIRTY[cache.TAG_LOC]  = Victim_Cache.DIRTY[i];
+            Victim_Cache.DIRTY[i]       = temp;
+            
+            Victim_Cache.hit(i);
+            Victim_Cache.NUM_OF_SWAP++;
+
+            if(rw=='w' || rw=='W') {
+                cache.DIRTY[cache.TAG_LOC] = 1;
+            }
+
+            return;
+        }
+    }
+
+    // cache miss
+    if(rw=='r' || rw=='R') {
+        cache.NUM_OF_READ_MISS++;
+    }
+    else {
+        cache.NUM_OF_WRITE_MISS;
+    }
+    cache.TOTAL_MEMORY_TRAFFIC++;
+    Victim_Cache.miss();
+    Victim_Cache.LRU_C[Victim_Cache.TAG_LOC] = 0;
+
+    if(Victim_Cache.DIRTY[Victim_Cache.TAG_LOC]) {
+        if(cache.nextLevel != NULL) {
+            temp = Victim_Cache.TAGS[Victim_Cache.TAG_LOC] << cache.block;
+            writeToAddress(L2_Cache, temp, 0);
+        }
+        Victim_Cache.NUM_OF_WRITE_BACK++;
+        cache.TOTAL_MEMORY_TRAFFIC++;
+    }
+
+    if(cache.nextLevel != NULL) {
+        readFromAddress(L2_Cache, address, 0);
+    }
+
+    temp                                        = cache.TAGS[cache.TAG_LOC];
+    Victim_Cache.TAGS[Victim_Cache.TAG_LOC]     = ((temp << cache.set) | (cache.INDEX % cache.SET));
+    temp                                        = cache.DIRTY[cache.TAG_LOC];
+    Victim_Cache.DIRTY[Victim_Cache.TAG_LOC]    = temp;
+    Victim_Cache.VALID[Victim_Cache.TAG_LOC]    = 1;
+    cache.TAGS[cache.TAG_LOC]                   = cache.TAG_ADD;
+    // cache.DIRTY[cache.TAG_LOC]                  = rw-'r' ? 1 : 0;
+    if(rw=='r' || rw=='R') {
+        cache.DIRTY[cache.TAG_LOC] = 0;
+    }
+    else {
+        cache.DIRTY[cache.TAG_LOC] = 1;
+    }
 
 }
