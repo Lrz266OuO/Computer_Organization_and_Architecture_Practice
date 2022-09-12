@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 01:58:09
+ * @LastEditTime: 2022-09-12 02:12:08
  * @Description:  
  */
 
@@ -71,8 +71,8 @@ class CACHE {
         void input();
         void output();
         
-        void readFromAddress(Cache &c, unsigned int add, unsigned int vc);
-        void writeToAddress(Cache &c, unsigned int add, unsigned int vc);
+        void readFromAddress(Cache &c, unsigned int add, unsigned int v);
+        void writeToAddress(Cache &c, unsigned int add, unsigned int v);
         void readFromVictim(Cache &c, unsigned int add, char rw);
 
 };

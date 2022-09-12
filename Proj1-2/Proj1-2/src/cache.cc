@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 02:02:58
+ * @LastEditTime: 2022-09-12 02:12:19
  * @Description:  
  */
 
@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
+#include <assert.h>
 
 /*
  * class Cache's function
@@ -120,17 +121,33 @@ void CACHE::init(unsigned int block, unsigned int size1, unsigned int assoc1, un
 
 void CACHE::input() {
 
+    char rw;
+    unsigned int address;
+
+    while(scanf("%c %x",&rw,&address) != EOF) {
+        if(rw=='r' || rw=='R') {
+            readFromAddress(L1_Cache, address, Victim_Cache.SIZE);
+        }
+        else if(rw=='w' || rw=='W') {
+            writeToAddress(L1_Cache, address, Victim_Cache.SIZE);
+        }
+        else {
+            printf("Error: operation valid.\n");
+            assert(0);
+        }
+    }
+
 }
 
 void CACHE::output() {
 
 }
 
-void CACHE::readFromAddress(Cache &c, unsigned int add, unsigned int vc) {
+void CACHE::readFromAddress(Cache &c, unsigned int add, unsigned int v) {
 
 }
 
-void CACHE::writeToAddress(Cache &c, unsigned int add, unsigned int vc) {
+void CACHE::writeToAddress(Cache &c, unsigned int add, unsigned int v) {
 
 }
 

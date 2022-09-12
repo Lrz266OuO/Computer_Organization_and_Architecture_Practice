@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 00:23:48
+ * @LastEditTime: 2022-09-12 02:10:23
  * @Description:  
  */
 
@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
+#include <assert.h>
 
 void Cache::init(unsigned int block, unsigned int size, unsigned int assoc, unsigned int replace, unsigned int write, char *tracefile) {
     
@@ -60,6 +61,10 @@ void Cache::input() {
         else if(rw=='w' || rw=='W') {
             NUM_OF_WRITE++;
             writeToAddress();
+        }
+        else {
+            printf("Error: operation valid.\n");
+            assert(0);
         }
     }
 

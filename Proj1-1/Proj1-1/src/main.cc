@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:27:01
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-10 03:29:45
+ * @LastEditTime: 2022-09-12 02:10:37
  * @Description:  
  */
 
@@ -12,6 +12,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
+#include <assert.h>
 
 Cache c;
 
