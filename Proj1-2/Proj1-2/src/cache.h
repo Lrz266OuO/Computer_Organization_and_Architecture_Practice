@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 01:31:25
+ * @LastEditTime: 2022-09-12 01:58:09
  * @Description:  
  */
 
@@ -15,8 +15,8 @@ class Cache {
         unsigned int BLOCKSIZE;             // block capacity of cache
         unsigned int SIZE;                  // total capacity of cache
         unsigned int ASSOC;                 // connectivity of cache
-        unsigned int SET;
-        unsigned int TAG;
+        unsigned int SET;                   // SET = SIZE/(BLOCKSIZE*ASSOC)
+        unsigned int TAG;                   // TAG = SIZE/BLOCKSIZE
 
         unsigned int NUM_OF_READ;           // number of read
         unsigned int NUM_OF_READ_MISS;      // number of read_miss

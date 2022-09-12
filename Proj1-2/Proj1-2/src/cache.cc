@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 01:50:25
+ * @LastEditTime: 2022-09-12 02:02:58
  * @Description:  
  */
 
@@ -102,3 +102,38 @@ void Cache::miss() {
  *
  */
 
+void CACHE::init(unsigned int block, unsigned int size1, unsigned int assoc1, unsigned int size2, unsigned int assoc2, unsigned int size_victim, char *tracefile) {
+
+    TRACE_FILE = tracefile;
+    
+    // Init L1, L2 and Victim cache
+    L1_Cache.init(block, size1, assoc1, size1/(block*assoc1), size1/block);
+    if(size2 > 0) {
+        L1_Cache.nextLevel = &L2_Cache;
+        L2_Cache.init(block, size2, assoc2, size2/(block*assoc2), size2/block);
+    }
+    if(size_victim > 0) {
+        Victim_Cache.init(block, size_victim, size_victim/block, 1, size_victim/block);
+    }
+
+}
+
+void CACHE::input() {
+
+}
+
+void CACHE::output() {
+
+}
+
+void CACHE::readFromAddress(Cache &c, unsigned int add, unsigned int vc) {
+
+}
+
+void CACHE::writeToAddress(Cache &c, unsigned int add, unsigned int vc) {
+
+}
+
+void CACHE::readFromVictim(Cache &c, unsigned int add, char rw) {
+
+}
