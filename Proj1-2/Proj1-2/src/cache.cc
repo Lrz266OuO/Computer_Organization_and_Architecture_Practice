@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 08:28:52
+ * @LastEditTime: 2022-09-12 20:20:00
  * @Description:  
  */
 
@@ -142,6 +142,15 @@ void CACHE::input() {
 void CACHE::output() {
 
     // TODO: 输出格式
+    printf("===== Simulator configuration =====\n");
+    printf("BLOCKSIZE:                    %d\n", L1_Cache.BLOCKSIZE);
+    printf("L1_SIZE:                      %d\n", L1_Cache.SIZE);
+    printf("L1_ASSOC:                     %d\n", L1_Cache.ASSOC);
+    printf("Victim_Cache_SIZE:            %d\n", Victim_Cache.SIZE);
+    printf("L2_SIZE:                      %d\n", L2_Cache.SIZE);
+    printf("L2_ASSOC:                     %d\n", L2_Cache.ASSOC);
+    printf("trace_file:                   %s\n", TRACE_FILE);
+    printf("===================================\n");
 
 }
 
