@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 07:36:43
+ * @LastEditTime: 2022-09-12 20:23:11
  * @Description:  
  */
 
@@ -65,6 +65,11 @@ class CACHE {
         Cache L1_Cache;                     // L1 cache
         Cache L2_Cache;                     // L2 cache
         Cache Victim_Cache;                 // Victim cache
+
+        unsigned int lru_key;
+        unsigned int tag_key;
+        unsigned int dir_key;
+        
         char *TRACE_FILE;                   // filename of address stream
 
     public:

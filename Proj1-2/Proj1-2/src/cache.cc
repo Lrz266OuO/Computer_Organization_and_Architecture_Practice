@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 20:20:00
+ * @LastEditTime: 2022-09-12 20:33:51
  * @Description:  
  */
 
@@ -152,6 +152,34 @@ void CACHE::output() {
     printf("trace_file:                   %s\n", TRACE_FILE);
     printf("===================================\n");
 
+    printf("===== L1 contents =====\n");
+    int i, j, k;
+    for(i=0; i<(int)L1_Cache.SET; i++) {
+        // bubble sort L1 cache
+        for(j=0; j<(int)L1_Cache.ASSOC; j++) {
+            lru_key = L1_Cache.LRU_C[i+j*L1_Cache.SET];
+            tag_key = L1_Cache.TAGS[i+j*L1_Cache.SET];
+            dir_key = L1_Cache.DIRTY[i+j*L1_Cache.SET];
+
+            for(k=j-1; k>=0 && lru_key<L1_Cache.LRU_C[i+k*L1_Cache.SET]; k--) {
+                L1_Cache.LRU_C[i+(k+1)*L1_Cache.SET] = L1_Cache.LRU_C[i+k*L1_Cache.SET];
+                L1_Cache.TAGS[i+(k+1)*L1_Cache.SET] = L1_Cache.TAGS[i+k*L1_Cache.SET];
+                L1_Cache.DIRTY[i+(k+1)*L1_Cache.SET] = L1_Cache.DIRTY[i+k*L1_Cache.SET];
+            }
+
+            L1_Cache.LRU_C[i+(k+1)*L1_Cache.SET] = lru_key;
+            L1_Cache.TAGS[i+(k+1)*L1_Cache.SET] = tag_key;
+            L1_Cache.DIRTY[i+(k+1)*L1_Cache.SET] = dir_key;
+        }
+
+        // print bubble sorting set
+        printf("set %d: ", i);
+        for(j=0; j<(int)L1_Cache.ASSOC; j++) {
+            printf("%x ", L1_Cache.TAGS[i+j*L1_Cache.SET]);
+            printf("%c ", L1_Cache.DIRTY[i+j*L1_Cache.SET] ? 'D ' : '  ');
+        }
+        printf("\n");
+    }
 }
 
 void CACHE::readFromAddress(Cache &cache, unsigned int address, unsigned int victim_cache) {
