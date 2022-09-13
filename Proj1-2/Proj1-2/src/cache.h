@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:34
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 20:23:11
+ * @LastEditTime: 2022-09-13 01:40:31
  * @Description:  
  */
 
@@ -26,6 +26,16 @@ class Cache {
         unsigned int NUM_OF_SWAP;           // number of swap: L1_cache miss but Victim_cache hit
         unsigned int TOTAL_MEMORY_TRAFFIC;  // total memory traffic between caches and main memory
 
+        /*
+        * L1.MISS_RATE      = (L1.readmisses+L1.writemisses) / (L1.reads+L1.writes));
+        * L1.MISS_PENALTY   = (20 + 0.5*L1.blocksize/16);
+        * L1.HIT_TIME       = (0.25 + 2.5*L1.size/(512*1024) + (0.025*L1.blocksize/16) + (0.025*L1_Cache.ASSOC));
+        * L1.ACCESS_TIME    = (L1.HIT_TIME + L1.MISS_RATE*L1.MISS_PENALTY;
+        * L2.MISS_RATE      = (L2.readmisses / L2.reads);
+        * L2.MISS_PENALTY   = (20 + 0.5*L2.blocksize/16);
+        * L2.HIT_TIME       = (2.5 + 2.5*L2.size/(512*1024) + 0.025*L2.blocksize/16 + 0.025*L2.assoc);
+        * L2.ACCESS_TIME    = L1.HIT_TIME + L1.MISS_RATE * (L2.HIT_TIME + L2.MISS_RATE * L2.MISS_PENALTY);
+        */
         double MISS_RATE;                   // miss rate
         double MISS_PENALTY;                // miss penalty
         double HIT_TIME;                    // hit time
@@ -66,6 +76,7 @@ class CACHE {
         Cache L2_Cache;                     // L2 cache
         Cache Victim_Cache;                 // Victim cache
 
+        // These keys are used for bubble sort.
         unsigned int lru_key;
         unsigned int tag_key;
         unsigned int dir_key;

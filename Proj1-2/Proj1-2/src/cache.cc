@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 20:59:38
+ * @LastEditTime: 2022-09-13 01:36:40
  * @Description:  
  */
 
@@ -232,6 +232,36 @@ void CACHE::output() {
             printf("\n");
         }
     }
+
+    // calculate the data
+    L1_Cache.MISS_RATE      = ((double)(L1_Cache.NUM_OF_READ_MISS+L1_Cache.NUM_OF_WRITE_MISS) / (double)(L1_Cache.NUM_OF_READ+L1_Cache.NUM_OF_WRITE));
+    L1_Cache.MISS_PENALTY   = (20 + 0.5*((double)L1_Cache.BLOCKSIZE/16));
+    L1_Cache.HIT_TIME       = (0.25 + (2.5*L1_Cache.SIZE/(512*1024)) + (0.025*L1_Cache.BLOCKSIZE/16) + (0.025*L1_Cache.ASSOC));
+    L1_Cache.ACCESS_TIME    = (L1_Cache.HIT_TIME + L1_Cache.MISS_RATE*L1_Cache.MISS_PENALTY);
+
+    L2_Cache.MISS_RATE      = ((double)L2_Cache.NUM_OF_READ_MISS / (double)L2_Cache.NUM_OF_READ);
+    L2_Cache.MISS_PENALTY   = (20 + 0.5*((double)L2_Cache.BLOCKSIZE/16));
+    L2_Cache.HIT_TIME       = (2.5 + (2.5*L2_Cache.SIZE/(512*1024)) + (0.025*L2_Cache.BLOCKSIZE/16) + (0.025*L2_Cache.ASSOC));
+    L2_Cache.ACCESS_TIME    = (L1_Cache.HIT_TIME + L1_Cache.MISS_RATE * (L2_Cache.HIT_TIME + L2_Cache.MISS_RATE * L2_Cache.MISS_PENALTY));
+
+    // output the data
+    printf("====== Simulation results (raw) ======\n");
+    printf("a. number of L1 reads:                %d\n", L1_Cache.NUM_OF_READ);
+    printf("b. number of L1 read misses:          %d\n", L1_Cache.NUM_OF_READ_MISS);
+    printf("c. number of L1 writes:\t\t     %d\n",       L1_Cache.NUM_OF_WRITE);
+    printf("d. number of L1 write misses:         %d\n", L1_Cache.NUM_OF_WRITE_MISS);
+    printf("e. L1 miss rate:                      %.4f\n", L1_Cache.MISS_RATE);
+    printf("f. number of swaps:                   %d\n", Victim_Cache.NUM_OF_SWAP);
+    printf("g. number of victim cache writeback:  %d\n", Victim_Cache.NUM_OF_WRITE_BACK);
+    printf("h. number of L2 reads:                %d\n", L2_Cache.NUM_OF_READ);
+    printf("i. number of L2 read misses:          %d\n", L2_Cache.NUM_OF_READ_MISS);
+    printf("j. number of L2 writes:               %d\n", L2_Cache.NUM_OF_WRITE);
+    printf("k. number of L2 write misses:         %d\n", L2_Cache.NUM_OF_WRITE_MISS);
+    printf("l. L2 miss rate:                      %d\n", L2_Cache.SIZE ? L2_Cache.MISS_RATE : 0);
+    printf("m. number of L2 writebacks:           %d\n", L2_Cache.NUM_OF_WRITE_BACK);
+    printf("n. total memory traffic:              %d\n", L2_Cache.SIZE ? L2_Cache.TOTAL_MEMORY_TRAFFIC : L1_Cache.TOTAL_MEMORY_TRAFFIC);
+    printf("==== Simulation results (performance) ====\n");
+    printf("1. average access time:         %.4f ns\n", L2_Cache.SIZE ? L2_Cache.ACCESS_TIME : L1_Cache.ACCESS_TIME);
 
 }
 
