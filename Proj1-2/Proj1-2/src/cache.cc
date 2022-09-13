@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 20:33:51
+ * @LastEditTime: 2022-09-12 20:59:38
  * @Description:  
  */
 
@@ -152,8 +152,10 @@ void CACHE::output() {
     printf("trace_file:                   %s\n", TRACE_FILE);
     printf("===================================\n");
 
-    printf("===== L1 contents =====\n");
     int i, j, k;
+
+    // output L1 cache
+    printf("===== L1 contents =====\n");
     for(i=0; i<(int)L1_Cache.SET; i++) {
         // bubble sort L1 cache
         for(j=0; j<(int)L1_Cache.ASSOC; j++) {
@@ -171,7 +173,6 @@ void CACHE::output() {
             L1_Cache.TAGS[i+(k+1)*L1_Cache.SET] = tag_key;
             L1_Cache.DIRTY[i+(k+1)*L1_Cache.SET] = dir_key;
         }
-
         // print bubble sorting set
         printf("set %d: ", i);
         for(j=0; j<(int)L1_Cache.ASSOC; j++) {
@@ -180,6 +181,58 @@ void CACHE::output() {
         }
         printf("\n");
     }
+
+    // output victim cache
+    if(Victim_Cache.SIZE) {
+        printf("===== Victim Cache contents =====\n");
+        printf("set 0: ");
+        for(i=1; i<(int)Victim_Cache.ASSOC; i++) {
+            lru_key = Victim_Cache.LRU_C[i];
+            tag_key = Victim_Cache.TAGS[i];
+            dir_key = Victim_Cache.DIRTY[i];
+            for( j=i-1; j>=0 && lru_key<Victim_Cache.LRU_C[j]; j--) {
+                Victim_Cache.LRU_C[j+1] = Victim_Cache.LRU_C[j];
+                Victim_Cache.TAGS[j+1] = Victim_Cache.TAGS[j];
+                Victim_Cache.DIRTY[j+1] = Victim_Cache.DIRTY[j];
+            }
+            Victim_Cache.LRU_C[j+1] = lru_key;
+            Victim_Cache.TAGS[j+1] = tag_key;
+            Victim_Cache.DIRTY[j+1] = dir_key;
+        }
+        for(i=0; i<(int)Victim_Cache.ASSOC; i++) {
+            printf("%x ", Victim_Cache.TAGS[i]);
+            printf("%c ", Victim_Cache.DIRTY[i] ? 'D ' : '  ');
+        }
+        printf("\n");
+    }
+
+    // output L2 cache
+    if(L2_Cache.SIZE) {
+        printf("===== L2 contents =====\n");
+        for(i=0; i<(int)L2_Cache.SET; i++) {
+            for(j=1; j<(int)L2_Cache.ASSOC; j++) {
+                lru_key = L2_Cache.LRU_C[i+(j*L2_Cache.SET)];
+                tag_key = L2_Cache.TAGS[i+(j*L2_Cache.SET)];
+                dir_key = L2_Cache.DIRTY[i+(j*L2_Cache.SET)];
+                for(k=j-1; k>=0 && lru_key<L2_Cache.LRU_C[i+(k*L2_Cache.SET)]; k--) {
+                    L2_Cache.LRU_C[i+((k+1)*L2_Cache.SET)] = L2_Cache.LRU_C[i+(k*L2_Cache.SET)];
+                    L2_Cache.TAGS[i+((k+1)*L2_Cache.SET)] = L2_Cache.TAGS[i+(k*L2_Cache.SET)];
+                    L2_Cache.DIRTY[i+((k+1)*L2_Cache.SET)] = L2_Cache.DIRTY[i+(k*L2_Cache.SET)];
+                }
+                L2_Cache.LRU_C[i+((k+1)*L2_Cache.SET)] = lru_key;
+                L2_Cache.TAGS[i+((k+1)*L2_Cache.SET)] = tag_key;
+                L2_Cache.DIRTY[i+((k+1)*L2_Cache.SET)] = dir_key;
+
+            }
+            printf("set %d: ", i);
+            for(j=0; j<(int)L2_Cache.ASSOC; j++) {
+                printf("%x ", L2_Cache.TAGS[i+(j*L2_Cache.SET)]);
+                printf("%c ", L2_Cache.DIRTY[i+(j*L2_Cache.SET)] ? 'D ' : '  ');
+            }
+            printf("\n");
+        }
+    }
+
 }
 
 void CACHE::readFromAddress(Cache &cache, unsigned int address, unsigned int victim_cache) {
