@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-10-29 23:41:35
+ * @LastEditTime: 2022-10-29 23:56:19
  * @Description:  
  */
 
@@ -160,7 +160,7 @@ void CACHE::output() {
     printf("===== L1 contents =====\n");
     for(i=0; i<(int)L1_Cache.SET; i++) {
         // bubble sort L1 cache
-        for(j=0; j<(int)L1_Cache.ASSOC; j++) {
+        for(j=1; j<(int)L1_Cache.ASSOC; j++) {
             lru_key = L1_Cache.LRU_C[i+j*L1_Cache.SET];
             tag_key = L1_Cache.TAGS[i+j*L1_Cache.SET];
             dir_key = L1_Cache.DIRTY[i+j*L1_Cache.SET];
@@ -179,7 +179,7 @@ void CACHE::output() {
         printf("set %d: ", i);
         for(j=0; j<(int)L1_Cache.ASSOC; j++) {
             printf("%x ", L1_Cache.TAGS[i+j*L1_Cache.SET]);
-            printf("%c ", L1_Cache.DIRTY[i+j*L1_Cache.SET] ? 'D ' : '  ');
+            printf("%c  ", L1_Cache.DIRTY[i+j*L1_Cache.SET] ? 'D' : ' ');
         }
         printf("\n");
     }
@@ -203,7 +203,7 @@ void CACHE::output() {
         }
         for(i=0; i<(int)Victim_Cache.ASSOC; i++) {
             printf("%x ", Victim_Cache.TAGS[i]);
-            printf("%c ", Victim_Cache.DIRTY[i] ? 'D ' : '  ');
+            printf("%c  ", Victim_Cache.DIRTY[i] ? 'D' : ' ');
         }
         printf("\n");
     }
@@ -229,7 +229,7 @@ void CACHE::output() {
             printf("set %d: ", i);
             for(j=0; j<(int)L2_Cache.ASSOC; j++) {
                 printf("%x ", L2_Cache.TAGS[i+(j*L2_Cache.SET)]);
-                printf("%c ", L2_Cache.DIRTY[i+(j*L2_Cache.SET)] ? 'D ' : '  ');
+                printf("%c  ", L2_Cache.DIRTY[i+(j*L2_Cache.SET)] ? 'D' : ' ');
             }
             printf("\n");
         }
@@ -259,7 +259,12 @@ void CACHE::output() {
     printf("i. number of L2 read misses:          %d\n", L2_Cache.NUM_OF_READ_MISS);
     printf("j. number of L2 writes:               %d\n", L2_Cache.NUM_OF_WRITE);
     printf("k. number of L2 write misses:         %d\n", L2_Cache.NUM_OF_WRITE_MISS);
-    printf("l. L2 miss rate:                      %.4f\n", L2_Cache.SIZE ? L2_Cache.MISS_RATE : 0);
+    if(L2_Cache.SIZE != 0){
+        printf("l. L2 miss rate:                      %.4f\n", L2_Cache.SIZE ? L2_Cache.MISS_RATE : 0);
+    }
+    else{
+        printf("l. L2 miss rate:                      0\n");
+    }    
     printf("m. number of L2 writebacks:           %d\n", L2_Cache.NUM_OF_WRITE_BACK);
     printf("n. total memory traffic:              %d\n", L2_Cache.SIZE ? L2_Cache.TOTAL_MEMORY_TRAFFIC : L1_Cache.TOTAL_MEMORY_TRAFFIC);
     printf("==== Simulation results (performance) ====\n");
@@ -443,7 +448,7 @@ void CACHE::readFromVictim(Cache &cache, unsigned int address, char rw) {
         cache.NUM_OF_READ_MISS++;
     }
     else {
-        cache.NUM_OF_WRITE_MISS;
+        cache.NUM_OF_WRITE_MISS++;
     }
     cache.TOTAL_MEMORY_TRAFFIC++;
     Victim_Cache.miss();
