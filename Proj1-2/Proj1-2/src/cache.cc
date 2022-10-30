@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-12 00:05:42
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-13 01:36:40
+ * @LastEditTime: 2022-10-29 23:41:35
  * @Description:  
  */
 
@@ -103,7 +103,7 @@ void Cache::miss() {
  *
  */
 
-void CACHE::init(unsigned int block, unsigned int size1, unsigned int assoc1, unsigned int size2, unsigned int assoc2, unsigned int size_victim, char *tracefile) {
+void CACHE::init(unsigned int block, unsigned int size1, unsigned int assoc1, unsigned int size_victim, unsigned int size2, unsigned int assoc2, char *tracefile) {
 
     TRACE_FILE = tracefile;
     
@@ -131,10 +131,12 @@ void CACHE::input() {
         else if(rw=='w' || rw=='W') {
             writeToAddress(L1_Cache, address, Victim_Cache.SIZE);
         }
+        /*
         else {
             printf("Error: operation valid.\n");
             assert(0);
         }
+        */
     }
 
 }
@@ -257,7 +259,7 @@ void CACHE::output() {
     printf("i. number of L2 read misses:          %d\n", L2_Cache.NUM_OF_READ_MISS);
     printf("j. number of L2 writes:               %d\n", L2_Cache.NUM_OF_WRITE);
     printf("k. number of L2 write misses:         %d\n", L2_Cache.NUM_OF_WRITE_MISS);
-    printf("l. L2 miss rate:                      %d\n", L2_Cache.SIZE ? L2_Cache.MISS_RATE : 0);
+    printf("l. L2 miss rate:                      %.4f\n", L2_Cache.SIZE ? L2_Cache.MISS_RATE : 0);
     printf("m. number of L2 writebacks:           %d\n", L2_Cache.NUM_OF_WRITE_BACK);
     printf("n. total memory traffic:              %d\n", L2_Cache.SIZE ? L2_Cache.TOTAL_MEMORY_TRAFFIC : L1_Cache.TOTAL_MEMORY_TRAFFIC);
     printf("==== Simulation results (performance) ====\n");

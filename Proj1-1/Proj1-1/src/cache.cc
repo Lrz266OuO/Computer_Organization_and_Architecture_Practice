@@ -2,7 +2,7 @@
  * @Author: LiRunze lirunze.me@gmail.com
  * @Date: 2022-09-09 05:59:55
  * @LastEditors: LiRunze
- * @LastEditTime: 2022-09-12 02:10:23
+ * @LastEditTime: 2022-10-29 23:09:48
  * @Description:  
  */
 
@@ -62,10 +62,12 @@ void Cache::input() {
             NUM_OF_WRITE++;
             writeToAddress();
         }
+        /*
         else {
             printf("Error: operation valid.\n");
             assert(0);
         }
+        */
     }
 
     MISS_RATE       = (double(NUM_OF_READ_MISS+NUM_OF_WRITE_MISS)/(NUM_OF_READ+NUM_OF_WRITE));
@@ -109,7 +111,7 @@ void Cache::output() {
     
     printf("\n");
     printf("  ==== Simulation results (performance) ====\n");
-    printf("  1. average access time:%15.4f ns\n", ACCESS_TIME);
+    printf("  1. average access time:%15.4f ns", ACCESS_TIME);
 
 }
 
